@@ -7,7 +7,7 @@
 
 ## Class
 
-CS5610 Web Development - Spring 2025
+CS5610 Web Development - Spring 2026
 
 ## Status
 
