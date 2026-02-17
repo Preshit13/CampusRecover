@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusRecover - Lost Items</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/lostItems.css">
+</head>
+<body>
+    <header>
+        <h1>🔍 CampusRecover - Lost Items</h1>
+        <nav>
+            <a href="/">Lost Items</a>
+            <a href="/found.html">Found Items</a>
+            <a href="/analytics.html">Analytics</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Report Lost Item Form -->
+        <section class="report-section">
+            <h2>Report a Lost Item</h2>
+            <form id="lostItemForm">
+                <div class="form-group">
+                    <label for="itemName">Item Name *</label>
+                    <input
+                        type="text"
+                        id="itemName"
+                        name="itemName"
+                        required
+                        placeholder="e.g., iPhone 13 Pro"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select category</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Books">Books</option>
+                        <option value="IDs">IDs & Cards</option>
+                        <option value="Keys">Keys</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        required
+                        rows="3"
+                        placeholder="Be specific! Include color, brand, distinctive features..."
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Last Seen Location *</label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        required
+                        placeholder="e.g., Snell Library 3rd floor"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="dateTime">Date & Time *</label>
+                    <input
+                        type="datetime-local"
+                        id="dateTime"
+                        name="dateTime"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="contactInfo">Contact Info *</label>
+                    <input
+                        type="email"
+                        id="contactInfo"
+                        name="contactInfo"
+                        required
+                        placeholder="your.email@northeastern.edu"
+                    >
+                </div>
+
+                <button type="submit" class="btn-primary">Report Lost Item</button>
+            </form>
+        </section>
+
+        <!-- Search & Filter -->
+        <section class="search-section">
+            <h2>Search Lost Items</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="filterCategory">Filter by Category:</label>
+                    <select id="filterCategory">
+                        <option value="">All Categories</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Books">Books</option>
+                        <option value="IDs">IDs & Cards</option>
+                        <option value="Keys">Keys</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterLocation">Filter by Location:</label>
+                    <input
+                        type="text"
+                        id="filterLocation"
+                        placeholder="e.g., Library"
+                    >
+                </div>
+
+                <button id="searchBtn" class="btn-secondary">Search</button>
+                <button id="clearBtn" class="btn-secondary">Clear Filters</button>
+            </div>
+        </section>
+
+        <!-- Lost Items List -->
+        <section class="items-section">
+            <h2>Recent Lost Items</h2>
+            <div id="lostItemsList" class="items-grid">
+                <!-- Items will be rendered here by JavaScript -->
+                <p class="loading">Loading items...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Edit Modal (hidden by default) -->
+    <div id="editModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Lost Item</h2>
+            <form id="editForm">
+                <input type="hidden" id="editItemId">
+
+                <div class="form-group">
+                    <label for="editItemName">Item Name *</label>
+                    <input type="text" id="editItemName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editCategory">Category *</label>
+                    <select id="editCategory" required>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Books">Books</option>
+                        <option value="IDs">IDs & Cards</option>
+                        <option value="Keys">Keys</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editDescription">Description *</label>
+                    <textarea id="editDescription" required rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editLocation">Location *</label>
+                    <input type="text" id="editLocation" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editDateTime">Date & Time *</label>
+                    <input type="datetime-local" id="editDateTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editContactInfo">Contact Info *</label>
+                    <input type="email" id="editContactInfo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editStatus">Status *</label>
+                    <select id="editStatus" required>
+                        <option value="active">Active</option>
+                        <option value="recovered">Recovered</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="/js/modules/lostItems.js"></script>
+</body>
+</html>
