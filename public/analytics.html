@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusRecover - Analytics</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/analytics.css" />
+  </head>
+  <body>
+    <header>
+      <h1>📊 CampusRecover - Analytics Dashboard</h1>
+      <nav>
+        <a href="/">Lost Items</a>
+        <a href="/found.html">Found Items</a>
+        <a href="/analytics.html">Analytics</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Overall Statistics Cards -->
+      <section class="stats-overview">
+        <h2>Overall Statistics</h2>
+        <div class="stats-grid" id="statsCards">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value" id="totalLost">--</div>
+            <div class="stat-label">Total Lost Items</div>
+          </div>
+
+          <div class="stat-card success">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="totalRecovered">--</div>
+            <div class="stat-label">Items Recovered</div>
+          </div>
+
+          <div class="stat-card warning">
+            <div class="stat-icon">🔍</div>
+            <div class="stat-value" id="totalActive">--</div>
+            <div class="stat-label">Still Looking</div>
+          </div>
+
+          <div class="stat-card info">
+            <div class="stat-icon">📈</div>
+            <div class="stat-value" id="recoveryRate">--%</div>
+            <div class="stat-label">Recovery Rate</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Common Loss Locations -->
+      <section class="analytics-section">
+        <h2>Most Common Loss Locations</h2>
+        <div id="locationsList" class="locations-list">
+          <p class="loading">Loading locations...</p>
+        </div>
+      </section>
+
+      <!-- Item Categories -->
+      <section class="analytics-section">
+        <h2>Most Frequently Lost Items</h2>
+        <div id="itemTypesList" class="item-types-list">
+          <p class="loading">Loading item types...</p>
+        </div>
+      </section>
+
+      <!-- Recovery Rate by Category -->
+      <section class="analytics-section">
+        <h2>Recovery Rate by Category</h2>
+        <div id="recoveryByCategoryTable" class="recovery-table">
+          <p class="loading">Loading recovery rates...</p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/js/modules/analytics.js"></script>
+  </body>
+</html>

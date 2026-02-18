@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./server/db/database.js";
 import lostItemsRoutes from "./server/routes/lostItems.js";
+import analyticsRoutes from "./server/routes/analytics.js";
 
 dotenv.config();
 
@@ -21,6 +22,9 @@ app.get("/api/test", (req, res) => {
 
 // Lost items routes
 app.use("/api/lost-items", lostItemsRoutes);
+
+// Analytics routes
+app.use("/api/analytics", analyticsRoutes);
 
 // Start server
 connectDB().then(() => {

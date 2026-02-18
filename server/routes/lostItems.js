@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
-// GET all lost items (with optional filters)
+// GET all lost items (with optional filters and smart sorting)
 router.get("/", async (req, res) => {
   try {
     const db = getDB();
@@ -14,7 +14,19 @@ router.get("/", async (req, res) => {
     if (category) filter.category = category;
     if (location) filter.location = new RegExp(location, "i");
 
-    const items = await db.collection("lost_items").find(filter).toArray();
+    // Fetch all items
+    let items = await db.collection("lost_items").find(filter).toArray();
+
+    // Sort: active items first (by newest), then recovered items (by newest)
+    items.sort((a, b) => {
+      // First, sort by status (active before recovered)
+      if (a.status === "active" && b.status === "recovered") return -1;
+      if (a.status === "recovered" && b.status === "active") return 1;
+
+      // Within same status, sort by createdAt (newest first)
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
     res.json(items);
   } catch (error) {
     res.status(500).json({ error: error.message });

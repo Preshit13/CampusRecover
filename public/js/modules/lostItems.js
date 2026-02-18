@@ -67,7 +67,7 @@ function renderLostItems(items) {
             <strong>📍 Location:</strong> ${item.location}
           </div>
           <div class="item-details">
-            <strong>📅 Date:</strong> ${new Date(item.dateTime).toLocaleString()}
+            <strong>📅 Last Seen:</strong> ${new Date(item.dateTime).toLocaleString()}
           </div>
           <div class="item-details">
             <strong>✉️ Contact:</strong> ${item.contactInfo}
@@ -85,7 +85,7 @@ function renderLostItems(items) {
             <button class="btn-delete" onclick="deleteItem('${item._id}')">Delete</button>
           </div>
         </div>
-      `
+      `,
     )
     .join("");
 }
@@ -98,14 +98,14 @@ async function submitLostItem(event) {
   const selectedDateTime = document.getElementById("dateTime").value;
   const selectedDate = new Date(selectedDateTime);
   const now = new Date();
-  
+
   // Set both to ignore seconds for comparison
   selectedDate.setSeconds(0, 0);
   now.setSeconds(0, 0);
 
   if (selectedDate > now) {
     alert(
-      "❌ Cannot report items lost in the future! Please select a past or current date."
+      "❌ Cannot report items lost in the future! Please select a past or current date.",
     );
     return;
   }
@@ -208,14 +208,14 @@ async function saveEdit(event) {
   const selectedDateTime = document.getElementById("editDateTime").value;
   const selectedDate = new Date(selectedDateTime);
   const now = new Date();
-  
+
   // Set both to ignore seconds for comparison
   selectedDate.setSeconds(0, 0);
   now.setSeconds(0, 0);
 
   if (selectedDate > now) {
     alert(
-      "❌ Cannot set lost date to the future! Please select a past or current date."
+      "❌ Cannot set lost date to the future! Please select a past or current date.",
     );
     return;
   }
