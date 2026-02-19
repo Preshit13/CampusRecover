@@ -186,42 +186,45 @@ updatedAt: Date // Last modification
 
 ## Project Structure
 
-\`\`\`
+```
 CampusRecover/
 ├── server/
-│ ├── db/
-│ │ └── database.js # MongoDB connection module
-│ ├── routes/
-│ │ ├── lostItems.js # Lost items CRUD routes (Preshit)
-│ │ ├── foundItems.js # Found items CRUD routes (Gurudatt)
-│ │ └── analytics.js # Analytics aggregation routes (Preshit)
-│ └── utils/
-│ └── matchingAlgorithm.js # Smart matching logic (Gurudatt)
+│   ├── db/
+│   │   └── database.js          # MongoDB connection module
+│   ├── routes/
+│   │   ├── lostItems.js         # Lost items CRUD routes (Preshit)
+│   │   ├── foundItems.js        # Found items CRUD routes (Gurudatt)
+│   │   └── analytics.js         # Analytics aggregation routes (Preshit)
+│   └── utils/
+│       └── matchingAlgorithm.js # Smart matching logic (Gurudatt)
 ├── public/
-│ ├── index.html # Lost items page (Preshit)
-│ ├── found.html # Found items page (Gurudatt)
-│ ├── analytics.html # Analytics dashboard (Preshit)
-│ ├── css/
-│ │ ├── main.css # Global styles
-│ │ ├── lostItems.css # Lost items page styles
-│ │ ├── foundItems.css # Found items page styles
-│ │ └── analytics.css # Analytics page styles
-│ └── js/modules/
-│ ├── lostItems.js # Lost items frontend logic
-│ ├── foundItems.js # Found items frontend logic
-│ ├── analytics.js # Analytics frontend logic
-│ └── matching.js # Matching display logic
+│   ├── index.html               # Lost items page (Preshit)
+│   ├── found.html               # Found items page (Gurudatt)
+│   ├── analytics.html           # Analytics dashboard (Preshit)
+│   ├── css/
+│   │   ├── main.css            # Global styles
+│   │   ├── lostItems.css       # Lost items page styles
+│   │   ├── foundItems.css      # Found items page styles
+│   │   └── analytics.css       # Analytics page styles
+│   └── js/modules/
+│       ├── lostItems.js        # Lost items frontend logic
+│       ├── foundItems.js       # Found items frontend logic
+│       ├── analytics.js        # Analytics frontend logic
+│       └── matching.js         # Matching display logic
 ├── scripts/
-│ └── seed.js # Database seeding script
+│   └── seed.js                 # Database seeding script
+├── screenshots/
+│   ├── lost-items.png          # Lost items page screenshot
+│   └── analytics.png           # Analytics page screenshot
 ├── docs/
-│ └── design-document.pdf # Design documentation
-├── .env.example # Environment template
-├── .gitignore # Git ignore rules
-├── package.json # Project dependencies
-├── server.js # Express application entry point
-├── LICENSE # MIT License
-└── README.md # This file
-\`\`\`
+│   └── design-document.pdf     # Design documentation
+├── .env.example                # Environment template
+├── .gitignore                  # Git ignore rules
+├── package.json                # Project dependencies
+├── server.js                   # Express application entry point
+├── LICENSE                     # MIT License
+└── README.md                   # This file
+```
 
 ## Code Quality
 
