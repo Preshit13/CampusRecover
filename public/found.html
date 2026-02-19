@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusRecover - Found Items</title>
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/foundItems.css" />
+</head>
+<body>
+  <header>
+    <h1>📦 CampusRecover - Found Items</h1>
+    <nav>
+      <a href="/">Lost Items</a>
+      <a href="/found.html">Found Items</a>
+      <a href="/analytics.html">Analytics</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Report Found Item Form -->
+    <section class="report-section">
+      <h2>Report a Found Item</h2>
+      <form id="foundItemForm">
+        <div class="form-group">
+          <label for="itemName">Item Name *</label>
+          <input
+            type="text"
+            id="itemName"
+            name="itemName"
+            required
+            placeholder="e.g., Blue Hydroflask"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="category">Category *</label>
+          <select id="category" name="category" required>
+            <option value="">Select category</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Books">Books</option>
+            <option value="IDs">IDs & Cards</option>
+            <option value="Keys">Keys</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea
+            id="description"
+            name="description"
+            required
+            rows="3"
+            placeholder="Describe the item in detail — color, brand, any distinctive features..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="locationFound">Where did you find it? *</label>
+          <input
+            type="text"
+            id="locationFound"
+            name="locationFound"
+            required
+            placeholder="e.g., Snell Library 2nd floor"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="currentLocation">Where is it now? *</label>
+          <input
+            type="text"
+            id="currentLocation"
+            name="currentLocation"
+            required
+            placeholder="e.g., Curry Student Center Lost & Found"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="dateTime">Date & Time Found *</label>
+          <input
+            type="datetime-local"
+            id="dateTime"
+            name="dateTime"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="contactInfo">Your Contact Email *</label>
+          <input
+            type="email"
+            id="contactInfo"
+            name="contactInfo"
+            required
+            placeholder="your.email@northeastern.edu"
+          />
+        </div>
+
+        <button type="submit" class="btn-primary">Report Found Item</button>
+      </form>
+    </section>
+
+    <!-- Search & Filter -->
+    <section class="search-section">
+      <h2>Search Found Items</h2>
+      <div class="filters">
+        <div class="filter-group">
+          <label for="filterCategory">Filter by Category:</label>
+          <select id="filterCategory">
+            <option value="">All Categories</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Books">Books</option>
+            <option value="IDs">IDs & Cards</option>
+            <option value="Keys">Keys</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterLocation">Filter by Location:</label>
+          <input
+            type="text"
+            id="filterLocation"
+            placeholder="e.g., Library"
+          />
+        </div>
+
+        <button id="searchBtn" class="btn-secondary">Search</button>
+        <button id="clearBtn" class="btn-secondary">Clear Filters</button>
+      </div>
+    </section>
+
+    <!-- Found Items List -->
+    <section class="items-section">
+      <h2>Recently Found Items</h2>
+      <div id="foundItemsList" class="items-grid">
+        <p class="loading">Loading items...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Edit Found Item</h2>
+      <form id="editForm">
+        <input type="hidden" id="editItemId" />
+
+        <div class="form-group">
+          <label for="editItemName">Item Name *</label>
+          <input type="text" id="editItemName" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editCategory">Category *</label>
+          <select id="editCategory" required>
+            <option value="Electronics">Electronics</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Books">Books</option>
+            <option value="IDs">IDs & Cards</option>
+            <option value="Keys">Keys</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="editDescription">Description *</label>
+          <textarea id="editDescription" required rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="editLocationFound">Where Found *</label>
+          <input type="text" id="editLocationFound" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editCurrentLocation">Current Location *</label>
+          <input type="text" id="editCurrentLocation" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editDateTime">Date & Time *</label>
+          <input type="datetime-local" id="editDateTime" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editContactInfo">Contact Email *</label>
+          <input type="email" id="editContactInfo" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editStatus">Status *</label>
+          <select id="editStatus" required>
+            <option value="unclaimed">Unclaimed</option>
+            <option value="claimed">Claimed</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Matches Modal -->
+  <div id="matchesModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-matches">&times;</span>
+      <h2>🎯 Potential Matches</h2>
+      <p class="matches-subtitle">These lost item reports might match the found item:</p>
+      <div id="matchesList">
+        <p class="loading">Finding matches...</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/modules/foundItems.js"></script>
+</body>
+</html>
