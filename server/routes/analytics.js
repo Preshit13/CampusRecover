@@ -17,13 +17,10 @@ router.get("/recovery-stats", async (req, res) => {
       .countDocuments({ status: "recovered" });
 
     // Count active items
-    const totalActive = await db
-      .collection("lost_items")
-      .countDocuments({ status: "active" });
+    const totalActive = await db.collection("lost_items").countDocuments({ status: "active" });
 
     // Calculate recovery rate
-    const recoveryRate =
-      totalLost > 0 ? ((totalRecovered / totalLost) * 100).toFixed(1) : 0;
+    const recoveryRate = totalLost > 0 ? ((totalRecovered / totalLost) * 100).toFixed(1) : 0;
 
     res.json({
       totalLost,

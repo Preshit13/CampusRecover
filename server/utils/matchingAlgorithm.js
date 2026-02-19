@@ -22,15 +22,42 @@ export function calculateKeywordSimilarity(desc1, desc2) {
 
   // Stopwords to ignore
   const stopwords = new Set([
-    'a','an','the','and','or','but','in','on','at','to','for',
-    'of','with','it','is','was','i','my','this','that','have',
-    'had','has','be','been','its','from','by','as','are',
+    "a",
+    "an",
+    "the",
+    "and",
+    "or",
+    "but",
+    "in",
+    "on",
+    "at",
+    "to",
+    "for",
+    "of",
+    "with",
+    "it",
+    "is",
+    "was",
+    "i",
+    "my",
+    "this",
+    "that",
+    "have",
+    "had",
+    "has",
+    "be",
+    "been",
+    "its",
+    "from",
+    "by",
+    "as",
+    "are",
   ]);
 
   const tokenize = (str) =>
     str
       .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/[^a-z0-9\s]/g, "")
       .split(/\s+/)
       .filter((w) => w.length > 2 && !stopwords.has(w));
 
@@ -54,19 +81,12 @@ export function calculateMatchScore(foundItem, lostItem) {
   let score = 0;
 
   // Category match — worth 40 points
-  if (
-    foundItem.category &&
-    lostItem.category &&
-    foundItem.category === lostItem.category
-  ) {
+  if (foundItem.category && lostItem.category && foundItem.category === lostItem.category) {
     score += 40;
   }
 
   // Location similarity — worth 30 points
-  const locationMatch = isSimilarLocation(
-    foundItem.locationFound,
-    lostItem.location
-  );
+  const locationMatch = isSimilarLocation(foundItem.locationFound, lostItem.location);
   if (locationMatch) score += 30;
 
   // Date proximity — worth 20 points
@@ -74,10 +94,7 @@ export function calculateMatchScore(foundItem, lostItem) {
   if (dateMatch) score += 20;
 
   // Keyword similarity in description — worth 10 points
-  const keywordScore = calculateKeywordSimilarity(
-    foundItem.description,
-    lostItem.description
-  );
+  const keywordScore = calculateKeywordSimilarity(foundItem.description, lostItem.description);
   score += Math.round(keywordScore * 10);
 
   return Math.min(score, 100);
@@ -86,7 +103,7 @@ export function calculateMatchScore(foundItem, lostItem) {
 // Find top matches for a found item from the lost items list
 export function findMatches(foundItem, lostItems) {
   const scored = lostItems
-    .filter((lost) => lost.status === 'active') // only match active lost items
+    .filter((lost) => lost.status === "active") // only match active lost items
     .map((lost) => ({
       ...lost,
       matchScore: calculateMatchScore(foundItem, lost),
@@ -108,19 +125,18 @@ export function getMatchReasons(foundItem, lostItem) {
   }
 
   if (isSimilarLocation(foundItem.locationFound, lostItem.location)) {
-    reasons.push(`Similar location: found at "${foundItem.locationFound}", lost near "${lostItem.location}"`);
+    reasons.push(
+      `Similar location: found at "${foundItem.locationFound}", lost near "${lostItem.location}"`
+    );
   }
 
   if (isRecentDate(foundItem.dateTime, lostItem.dateTime, 7)) {
-    reasons.push('Found within 7 days of when item was lost');
+    reasons.push("Found within 7 days of when item was lost");
   }
 
-  const kwScore = calculateKeywordSimilarity(
-    foundItem.description,
-    lostItem.description
-  );
+  const kwScore = calculateKeywordSimilarity(foundItem.description, lostItem.description);
   if (kwScore > 0.1) {
-    reasons.push('Similar description keywords');
+    reasons.push("Similar description keywords");
   }
 
   return reasons;

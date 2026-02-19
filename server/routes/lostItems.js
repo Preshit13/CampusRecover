@@ -37,9 +37,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const db = getDB();
-    const item = await db
-      .collection("lost_items")
-      .findOne({ _id: new ObjectId(req.params.id) });
+    const item = await db.collection("lost_items").findOne({ _id: new ObjectId(req.params.id) });
 
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
@@ -108,7 +106,7 @@ router.patch("/:id/status", async (req, res) => {
       .collection("lost_items")
       .updateOne(
         { _id: new ObjectId(req.params.id) },
-        { $set: { status: req.body.status, updatedAt: new Date() } },
+        { $set: { status: req.body.status, updatedAt: new Date() } }
       );
 
     if (result.matchedCount === 0) {

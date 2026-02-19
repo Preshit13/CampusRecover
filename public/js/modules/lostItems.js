@@ -85,7 +85,7 @@ function renderLostItems(items) {
             <button class="btn-delete" onclick="deleteItem('${item._id}')">Delete</button>
           </div>
         </div>
-      `,
+      `
     )
     .join("");
 }
@@ -99,14 +99,11 @@ async function submitLostItem(event) {
   const selectedDate = new Date(selectedDateTime);
   const now = new Date();
 
-  // Set both to ignore seconds for comparison
   selectedDate.setSeconds(0, 0);
   now.setSeconds(0, 0);
 
   if (selectedDate > now) {
-    alert(
-      "❌ Cannot report items lost in the future! Please select a past or current date.",
-    );
+    alert("❌ Cannot report items lost in the future! Please select a past or current date.");
     return;
   }
 
@@ -134,12 +131,11 @@ async function submitLostItem(event) {
     alert("✅ Lost item reported successfully!");
     document.getElementById("lostItemForm").reset();
 
-    // Reset the max attribute for next use
     const nowReset = getCurrentLocalDateTime();
     document.getElementById("dateTime").setAttribute("max", nowReset);
     document.getElementById("dateTime").value = nowReset;
 
-    loadItems(); // Reload the list
+    loadItems();
   } catch (error) {
     console.error("Error submitting item:", error);
     alert("❌ Failed to submit item. Please try again.");
@@ -154,14 +150,12 @@ window.editItem = async function (itemId) {
 
     const item = await response.json();
 
-    // Populate edit form
     document.getElementById("editItemId").value = item._id;
     document.getElementById("editItemName").value = item.itemName;
     document.getElementById("editCategory").value = item.category;
     document.getElementById("editDescription").value = item.description;
     document.getElementById("editLocation").value = item.location;
 
-    // Convert stored UTC date to local datetime-local format
     const itemDate = new Date(item.dateTime);
     const localDateTime =
       itemDate.getFullYear() +
@@ -178,21 +172,18 @@ window.editItem = async function (itemId) {
     document.getElementById("editContactInfo").value = item.contactInfo;
     document.getElementById("editStatus").value = item.status;
 
-    // Set max to current LOCAL time (prevent future dates)
     const now = getCurrentLocalDateTime();
     const editDateTimeInput = document.getElementById("editDateTime");
     editDateTimeInput.setAttribute("max", now);
 
-    // Custom validation message
     editDateTimeInput.addEventListener("invalid", (e) => {
       e.target.setCustomValidity("Date and time cannot be in the future");
     });
 
     editDateTimeInput.addEventListener("input", (e) => {
-      e.target.setCustomValidity(""); // Clear on input
+      e.target.setCustomValidity("");
     });
 
-    // Show modal
     document.getElementById("editModal").style.display = "flex";
   } catch (error) {
     console.error("Error loading item for edit:", error);
@@ -204,19 +195,15 @@ window.editItem = async function (itemId) {
 async function saveEdit(event) {
   event.preventDefault();
 
-  // Validate date is not in future (ignore seconds)
   const selectedDateTime = document.getElementById("editDateTime").value;
   const selectedDate = new Date(selectedDateTime);
   const now = new Date();
 
-  // Set both to ignore seconds for comparison
   selectedDate.setSeconds(0, 0);
   now.setSeconds(0, 0);
 
   if (selectedDate > now) {
-    alert(
-      "❌ Cannot set lost date to the future! Please select a past or current date.",
-    );
+    alert("❌ Cannot set lost date to the future! Please select a past or current date.");
     return;
   }
 
@@ -319,39 +306,26 @@ async function loadItems(category = "", location = "") {
 
 // Initialize page
 document.addEventListener("DOMContentLoaded", () => {
-  // Set max datetime to current LOCAL time (prevent future dates)
   const now = getCurrentLocalDateTime();
   const dateTimeInput = document.getElementById("dateTime");
   dateTimeInput.setAttribute("max", now);
-  dateTimeInput.value = now; // Pre-fill with current time
+  dateTimeInput.value = now;
 
-  // Custom validation message
   dateTimeInput.addEventListener("invalid", (e) => {
     e.target.setCustomValidity("Date and time cannot be in the future");
   });
 
   dateTimeInput.addEventListener("input", (e) => {
-    e.target.setCustomValidity(""); // Clear on input
+    e.target.setCustomValidity("");
   });
 
-  // Load items on page load
   loadItems();
 
-  // Form submit handler
-  document
-    .getElementById("lostItemForm")
-    .addEventListener("submit", submitLostItem);
-
-  // Edit form submit handler
+  document.getElementById("lostItemForm").addEventListener("submit", submitLostItem);
   document.getElementById("editForm").addEventListener("submit", saveEdit);
-
-  // Search button
   document.getElementById("searchBtn").addEventListener("click", searchItems);
-
-  // Clear filters button
   document.getElementById("clearBtn").addEventListener("click", clearFilters);
 
-  // Close modal when clicking X or outside
   document.querySelector(".close").addEventListener("click", closeEditModal);
   window.addEventListener("click", (e) => {
     if (e.target === document.getElementById("editModal")) {

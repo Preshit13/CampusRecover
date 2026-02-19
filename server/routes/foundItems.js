@@ -1,26 +1,26 @@
-import express from 'express';
-import { getDB } from '../db/database.js';
-import { ObjectId } from 'mongodb';
-import { findMatches } from '../utils/matchingAlgorithm.js';
+import express from "express";
+import { getDB } from "../db/database.js";
+import { ObjectId } from "mongodb";
+import { findMatches } from "../utils/matchingAlgorithm.js";
 
 const router = express.Router();
 
 // GET all found items (with optional filters)
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const db = getDB();
     const { category, location } = req.query;
 
     let filter = {};
     if (category) filter.category = category;
-    if (location) filter.locationFound = new RegExp(location, 'i');
+    if (location) filter.locationFound = new RegExp(location, "i");
 
-    let items = await db.collection('found_items').find(filter).toArray();
+    let items = await db.collection("found_items").find(filter).toArray();
 
     // Sort: unclaimed first (newest), then claimed (newest)
     items.sort((a, b) => {
-      if (a.status === 'unclaimed' && b.status === 'claimed') return -1;
-      if (a.status === 'claimed' && b.status === 'unclaimed') return 1;
+      if (a.status === "unclaimed" && b.status === "claimed") return -1;
+      if (a.status === "claimed" && b.status === "unclaimed") return 1;
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
@@ -31,14 +31,12 @@ router.get('/', async (req, res) => {
 });
 
 // GET single found item by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const db = getDB();
-    const item = await db
-      .collection('found_items')
-      .findOne({ _id: new ObjectId(req.params.id) });
+    const item = await db.collection("found_items").findOne({ _id: new ObjectId(req.params.id) });
 
-    if (!item) return res.status(404).json({ error: 'Item not found' });
+    if (!item) return res.status(404).json({ error: "Item not found" });
     res.json(item);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -46,7 +44,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create new found item
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const db = getDB();
     const newItem = {
@@ -57,11 +55,11 @@ router.post('/', async (req, res) => {
       currentLocation: req.body.currentLocation,
       dateTime: new Date(req.body.dateTime || Date.now()),
       contactInfo: req.body.contactInfo,
-      status: req.body.status || 'unclaimed',
+      status: req.body.status || "unclaimed",
       createdAt: new Date(),
     };
 
-    const result = await db.collection('found_items').insertOne(newItem);
+    const result = await db.collection("found_items").insertOne(newItem);
     res.status(201).json({ ...newItem, _id: result.insertedId });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -69,7 +67,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update found item
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const db = getDB();
     const updateData = {
@@ -85,68 +83,64 @@ router.put('/:id', async (req, res) => {
     };
 
     const result = await db
-      .collection('found_items')
+      .collection("found_items")
       .updateOne({ _id: new ObjectId(req.params.id) }, { $set: updateData });
 
-    if (result.matchedCount === 0)
-      return res.status(404).json({ error: 'Item not found' });
+    if (result.matchedCount === 0) return res.status(404).json({ error: "Item not found" });
 
-    res.json({ message: 'Item updated', ...updateData });
+    res.json({ message: "Item updated", ...updateData });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // PATCH mark as claimed
-router.patch('/:id/status', async (req, res) => {
+router.patch("/:id/status", async (req, res) => {
   try {
     const db = getDB();
     const result = await db
-      .collection('found_items')
+      .collection("found_items")
       .updateOne(
         { _id: new ObjectId(req.params.id) },
         { $set: { status: req.body.status, updatedAt: new Date() } }
       );
 
-    if (result.matchedCount === 0)
-      return res.status(404).json({ error: 'Item not found' });
+    if (result.matchedCount === 0) return res.status(404).json({ error: "Item not found" });
 
-    res.json({ message: 'Status updated' });
+    res.json({ message: "Status updated" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // DELETE found item
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const db = getDB();
     const result = await db
-      .collection('found_items')
+      .collection("found_items")
       .deleteOne({ _id: new ObjectId(req.params.id) });
 
-    if (result.deletedCount === 0)
-      return res.status(404).json({ error: 'Item not found' });
+    if (result.deletedCount === 0) return res.status(404).json({ error: "Item not found" });
 
-    res.json({ message: 'Item deleted' });
+    res.json({ message: "Item deleted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // GET matches for a found item
-import { findMatches } from '../utils/matchingAlgorithm.js';
 
-router.get('/:id/matches', async (req, res) => {
+router.get("/:id/matches", async (req, res) => {
   try {
     const db = getDB();
     const foundItem = await db
-      .collection('found_items')
+      .collection("found_items")
       .findOne({ _id: new ObjectId(req.params.id) });
 
-    if (!foundItem) return res.status(404).json({ error: 'Item not found' });
+    if (!foundItem) return res.status(404).json({ error: "Item not found" });
 
-    const lostItems = await db.collection('lost_items').find({}).toArray();
+    const lostItems = await db.collection("lost_items").find({}).toArray();
     const matches = findMatches(foundItem, lostItems);
 
     res.json(matches);

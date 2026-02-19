@@ -63,8 +63,7 @@ function renderRecoveryStats(stats) {
   document.getElementById("totalLost").textContent = stats.totalLost;
   document.getElementById("totalRecovered").textContent = stats.totalRecovered;
   document.getElementById("totalActive").textContent = stats.totalActive;
-  document.getElementById("recoveryRate").textContent =
-    `${stats.recoveryRate}%`;
+  document.getElementById("recoveryRate").textContent = `${stats.recoveryRate}%`;
 }
 
 // Render common locations
@@ -135,7 +134,7 @@ function renderItemTypes(itemTypes) {
       </div>
       <span class="category-count">${type.count}</span>
     </div>
-  `,
+  `
     )
     .join("");
 }
@@ -189,7 +188,7 @@ function renderRecoveryByCategory(data) {
               </div>
             </td>
           </tr>
-        `,
+        `
           )
           .join("")}
       </tbody>
@@ -222,7 +221,4 @@ async function loadAnalytics() {
 // Initialize page
 document.addEventListener("DOMContentLoaded", () => {
   loadAnalytics();
-
-  // Refresh data every 30 seconds (optional)
-  // setInterval(loadAnalytics, 30000);
 });
