@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CampusRecover - Analytics</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>"
+    />
     <link rel="stylesheet" href="/css/main.css" />
     <link rel="stylesheet" href="/css/analytics.css" />
     <link rel="stylesheet" href="/css/navigation.css" />
@@ -80,18 +84,18 @@
       <p>Built by Preshit Ravindra Pimple &amp; Gurudatt Pramod Gaonkar · CS5610 Web Development</p>
     </footer>
     <script>
-  // Highlight active nav link based on current page
-  const path = window.location.pathname;
-  document.querySelectorAll('nav a').forEach((link) => {
-    const href = link.getAttribute('href');
-    if (
-      href === path ||
-      (href === '/' && (path === '/' || path === '/index.html')) ||
-      (href !== '/' && path.includes(href))
-    ) {
-      link.classList.add('active');
-    }
-  });
-</script>
+      // Highlight active nav link based on current page
+      const path = window.location.pathname;
+      document.querySelectorAll("nav a").forEach((link) => {
+        const href = link.getAttribute("href");
+        if (
+          href === path ||
+          (href === "/" && (path === "/" || path === "/index.html")) ||
+          (href !== "/" && path.includes(href))
+        ) {
+          link.classList.add("active");
+        }
+      });
+    </script>
   </body>
 </html>
