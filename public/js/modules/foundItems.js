@@ -1,6 +1,6 @@
 // Found Items Module
 
-const API_URL = "http://localhost:3000/api/found-items";
+const API_URL = "/api/found-items";
 let currentPage = 1;
 let currentCategory = "";
 let currentLocation = "";

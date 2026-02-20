@@ -1,6 +1,6 @@
 // Lost Items Module
 
-const API_URL = "http://localhost:3000/api/lost-items";
+const API_URL = "/api/lost-items";
 let currentPage = 1;
 let currentCategory = "";
 let currentLocation = "";

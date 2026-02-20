@@ -1,7 +1,7 @@
 // Matching Module
 // Handles fetching and displaying match suggestions for found items
 
-const API_URL = "http://localhost:3000/api/found-items";
+const API_URL = "/api/found-items";
 
 // Fetch matches for a found item from the backend
 export async function fetchMatches(foundItemId) {
