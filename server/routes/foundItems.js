@@ -129,8 +129,6 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// GET matches for a found item
-
 router.get("/:id/matches", async (req, res) => {
   try {
     const db = getDB();
