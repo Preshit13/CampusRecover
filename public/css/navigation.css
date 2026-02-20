@@ -1,0 +1,37 @@
+/* Navigation Styles */
+
+nav a.active {
+  background: rgba(255, 255, 255, 0.35);
+  font-weight: 700;
+  border-bottom: 2px solid white;
+}
+
+nav a {
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+  padding: 1.5rem 2rem;
+  margin-top: 3rem;
+}
+
+footer p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 0.25rem;
+}
+
+footer a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: white;
+  text-decoration: underline;
+}
