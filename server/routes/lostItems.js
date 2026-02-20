@@ -4,30 +4,49 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
-// GET all lost items (with optional filters and smart sorting)
+// GET all lost items (with pagination, filters, and smart sorting)
 router.get("/", async (req, res) => {
   try {
     const db = getDB();
-    const { category, location } = req.query;
+    const { category, location, page = 1, limit = 18 } = req.query;
 
     let filter = {};
     if (category) filter.category = category;
     if (location) filter.location = new RegExp(location, "i");
 
-    // Fetch all items
+    // Count total matching items
+    const totalItems = await db.collection("lost_items").countDocuments(filter);
+
+    // Calculate pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+    const totalPages = Math.ceil(totalItems / limitNum);
+
+    // Fetch all matching items (for sorting)
     let items = await db.collection("lost_items").find(filter).toArray();
 
     // Sort: active items first (by newest), then recovered items (by newest)
     items.sort((a, b) => {
-      // First, sort by status (active before recovered)
       if (a.status === "active" && b.status === "recovered") return -1;
       if (a.status === "recovered" && b.status === "active") return 1;
-
-      // Within same status, sort by createdAt (newest first)
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
-    res.json(items);
+    // Apply pagination after sorting
+    const paginatedItems = items.slice(skip, skip + limitNum);
+
+    res.json({
+      items: paginatedItems,
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalItems,
+        itemsPerPage: limitNum,
+        hasNextPage: pageNum < totalPages,
+        hasPrevPage: pageNum > 1,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

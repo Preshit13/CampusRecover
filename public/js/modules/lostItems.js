@@ -1,6 +1,9 @@
 // Lost Items Module
 
 const API_URL = "http://localhost:3000/api/lost-items";
+let currentPage = 1;
+let currentCategory = "";
+let currentLocation = "";
 
 // Helper function to get current local datetime in required format
 function getCurrentLocalDateTime() {
@@ -14,27 +17,27 @@ function getCurrentLocalDateTime() {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-// Fetch all lost items (with optional filters)
-async function fetchLostItems(category = "", location = "") {
+// Fetch all lost items (with optional filters and pagination)
+async function fetchLostItems(category = "", location = "", page = 1) {
   try {
     let url = API_URL;
     const params = new URLSearchParams();
 
     if (category) params.append("category", category);
     if (location) params.append("location", location);
+    params.append("page", page);
+    params.append("limit", "18");
 
-    if (params.toString()) {
-      url += `?${params.toString()}`;
-    }
+    url += `?${params.toString()}`;
 
     const response = await fetch(url);
     if (!response.ok) throw new Error("Failed to fetch items");
 
-    const items = await response.json();
-    return items;
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error("Error fetching items:", error);
-    return [];
+    return { items: [], pagination: null };
   }
 }
 
@@ -90,11 +93,73 @@ function renderLostItems(items) {
     .join("");
 }
 
+// Render pagination controls
+function renderPagination(pagination) {
+  const container = document.getElementById("paginationControls");
+
+  if (!pagination || pagination.totalPages <= 1) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const { currentPage, totalPages, hasPrevPage, hasNextPage, totalItems } = pagination;
+
+  container.innerHTML = `
+    <div class="pagination">
+      <div class="pagination-info">
+        Showing page ${currentPage} of ${totalPages} (${totalItems} total items)
+      </div>
+      <div class="pagination-buttons">
+        <button 
+          class="pagination-btn" 
+          onclick="goToPage(1)" 
+          ${currentPage === 1 ? "disabled" : ""}
+        >
+          « First
+        </button>
+        <button 
+          class="pagination-btn" 
+          onclick="goToPage(${currentPage - 1})" 
+          ${!hasPrevPage ? "disabled" : ""}
+        >
+          ‹ Prev
+        </button>
+        <span class="page-number">Page ${currentPage}</span>
+        <button 
+          class="pagination-btn" 
+          onclick="goToPage(${currentPage + 1})" 
+          ${!hasNextPage ? "disabled" : ""}
+        >
+          Next ›
+        </button>
+        <button 
+          class="pagination-btn" 
+          onclick="goToPage(${totalPages})" 
+          ${currentPage === totalPages ? "disabled" : ""}
+        >
+          Last »
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Go to specific page
+window.goToPage = function (page) {
+  currentPage = page;
+  loadItems(currentCategory, currentLocation, currentPage);
+
+  // Scroll to items section, not top of page
+  const itemsSection = document.querySelector(".items-section");
+  if (itemsSection) {
+    itemsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
 // Submit new lost item
 async function submitLostItem(event) {
   event.preventDefault();
 
-  // Validate date is not in future (ignore seconds)
   const selectedDateTime = document.getElementById("dateTime").value;
   const selectedDate = new Date(selectedDateTime);
   const now = new Date();
@@ -135,6 +200,7 @@ async function submitLostItem(event) {
     document.getElementById("dateTime").setAttribute("max", nowReset);
     document.getElementById("dateTime").value = nowReset;
 
+    currentPage = 1;
     loadItems();
   } catch (error) {
     console.error("Error submitting item:", error);
@@ -231,7 +297,7 @@ async function saveEdit(event) {
 
     alert("✅ Item updated successfully!");
     closeEditModal();
-    loadItems();
+    loadItems(currentCategory, currentLocation, currentPage);
   } catch (error) {
     console.error("Error updating item:", error);
     alert("❌ Failed to update item");
@@ -259,7 +325,7 @@ window.markAsRecovered = async function (itemId) {
     if (!response.ok) throw new Error("Failed to update status");
 
     alert("✅ Item marked as recovered!");
-    loadItems();
+    loadItems(currentCategory, currentLocation, currentPage);
   } catch (error) {
     console.error("Error updating status:", error);
     alert("❌ Failed to update status");
@@ -278,7 +344,7 @@ window.deleteItem = async function (itemId) {
     if (!response.ok) throw new Error("Failed to delete item");
 
     alert("✅ Item deleted successfully!");
-    loadItems();
+    loadItems(currentCategory, currentLocation, currentPage);
   } catch (error) {
     console.error("Error deleting item:", error);
     alert("❌ Failed to delete item");
@@ -287,21 +353,26 @@ window.deleteItem = async function (itemId) {
 
 // Search/filter functionality
 function searchItems() {
-  const category = document.getElementById("filterCategory").value;
-  const location = document.getElementById("filterLocation").value;
-  loadItems(category, location);
+  currentCategory = document.getElementById("filterCategory").value;
+  currentLocation = document.getElementById("filterLocation").value;
+  currentPage = 1;
+  loadItems(currentCategory, currentLocation, currentPage);
 }
 
 function clearFilters() {
   document.getElementById("filterCategory").value = "";
   document.getElementById("filterLocation").value = "";
+  currentCategory = "";
+  currentLocation = "";
+  currentPage = 1;
   loadItems();
 }
 
 // Load items (called on page load and after changes)
-async function loadItems(category = "", location = "") {
-  const items = await fetchLostItems(category, location);
-  renderLostItems(items);
+async function loadItems(category = "", location = "", page = 1) {
+  const data = await fetchLostItems(category, location, page);
+  renderLostItems(data.items);
+  renderPagination(data.pagination);
 }
 
 // Initialize page

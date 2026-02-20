@@ -1,6 +1,9 @@
 // Found Items Module
 
 const API_URL = "http://localhost:3000/api/found-items";
+let currentPage = 1;
+let currentCategory = "";
+let currentLocation = "";
 
 // Helper: get current local datetime string for datetime-local input
 function getCurrentLocalDateTime() {
@@ -13,20 +16,22 @@ function getCurrentLocalDateTime() {
   return `${y}-${mo}-${d}T${h}:${mi}`;
 }
 
-// Fetch all found items with optional filters
-async function fetchFoundItems(category = "", location = "") {
+// Fetch all found items with optional filters and pagination
+async function fetchFoundItems(category = "", location = "", page = 1) {
   try {
     const params = new URLSearchParams();
     if (category) params.append("category", category);
     if (location) params.append("location", location);
+    params.append("page", page);
+    params.append("limit", "18");
 
-    const url = params.toString() ? `${API_URL}?${params}` : API_URL;
+    const url = `${API_URL}?${params.toString()}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error("Failed to fetch items");
     return await res.json();
   } catch (err) {
     console.error("Error fetching found items:", err);
-    return [];
+    return { items: [], pagination: null };
   }
 }
 
@@ -77,11 +82,80 @@ function renderFoundItems(items) {
     .join("");
 }
 
+// Render pagination controls
+function renderPagination(pagination) {
+  const container = document.getElementById("paginationControls");
+
+  if (!pagination || pagination.totalPages <= 1) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const { currentPage, totalPages, hasPrevPage, hasNextPage, totalItems } = pagination;
+
+  container.innerHTML = `
+    <div class="pagination">
+      <div class="pagination-info">
+        Showing page ${currentPage} of ${totalPages} (${totalItems} total items)
+      </div>
+      <div class="pagination-buttons">
+        <button 
+          class="pagination-btn" 
+          onclick="goToPage(1)" 
+          ${currentPage === 1 ? "disabled" : ""}
+        >
+          « First
+        </button>
+        <button 
+          class="pagination-btn" 
+          onclick="goToPage(${currentPage - 1})" 
+          ${!hasPrevPage ? "disabled" : ""}
+        >
+          ‹ Prev
+        </button>
+        <span class="page-number">Page ${currentPage}</span>
+        <button 
+          class="pagination-btn" 
+          onclick="goToPage(${currentPage + 1})" 
+          ${!hasNextPage ? "disabled" : ""}
+        >
+          Next ›
+        </button>
+        <button 
+          class="pagination-btn" 
+          onclick="goToPage(${totalPages})" 
+          ${currentPage === totalPages ? "disabled" : ""}
+        >
+          Last »
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Go to specific page
+window.goToPage = function (page) {
+  currentPage = page;
+  loadItems(currentCategory, currentLocation, currentPage);
+
+  // Scroll to items section, not top of page
+  const itemsSection = document.querySelector(".items-section");
+  if (itemsSection) {
+    itemsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
+// Load items
+async function loadItems(category = "", location = "", page = 1) {
+  const data = await fetchFoundItems(category, location, page);
+  renderFoundItems(data.items);
+  renderPagination(data.pagination);
+}
+
 // Submit new found item
 async function submitFoundItem(e) {
   e.preventDefault();
 
-  // Validate not future date
   const selectedDate = new Date(document.getElementById("dateTime").value);
   const now = new Date();
   selectedDate.setSeconds(0, 0);
@@ -117,6 +191,7 @@ async function submitFoundItem(e) {
     document.getElementById("dateTime").setAttribute("max", nowStr);
     document.getElementById("dateTime").value = nowStr;
 
+    currentPage = 1;
     loadItems();
   } catch (err) {
     console.error("Error submitting found item:", err);
@@ -140,7 +215,6 @@ window.editItem = async function (itemId) {
     document.getElementById("editContactInfo").value = item.contactInfo;
     document.getElementById("editStatus").value = item.status;
 
-    // Format date for datetime-local input
     const d = new Date(item.dateTime);
     document.getElementById("editDateTime").value =
       `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}T${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
@@ -188,7 +262,7 @@ async function saveEdit(e) {
 
     alert("✅ Item updated successfully!");
     closeEditModal();
-    loadItems();
+    loadItems(currentCategory, currentLocation, currentPage);
   } catch (err) {
     console.error("Error updating item:", err);
     alert("❌ Failed to update item");
@@ -212,7 +286,7 @@ window.markAsClaimed = async function (itemId) {
     if (!res.ok) throw new Error("Failed to update status");
 
     alert("✅ Item marked as claimed!");
-    loadItems();
+    loadItems(currentCategory, currentLocation, currentPage);
   } catch (err) {
     console.error("Error updating status:", err);
     alert("❌ Failed to update status");
@@ -227,7 +301,7 @@ window.deleteItem = async function (itemId) {
     if (!res.ok) throw new Error("Failed to delete");
 
     alert("✅ Item deleted successfully!");
-    loadItems();
+    loadItems(currentCategory, currentLocation, currentPage);
   } catch (err) {
     console.error("Error deleting item:", err);
     alert("❌ Failed to delete item");
@@ -299,21 +373,19 @@ window.closeMatchesModal = function () {
 
 // Search/filter
 function searchItems() {
-  const category = document.getElementById("filterCategory").value;
-  const location = document.getElementById("filterLocation").value;
-  loadItems(category, location);
+  currentCategory = document.getElementById("filterCategory").value;
+  currentLocation = document.getElementById("filterLocation").value;
+  currentPage = 1;
+  loadItems(currentCategory, currentLocation, currentPage);
 }
 
 function clearFilters() {
   document.getElementById("filterCategory").value = "";
   document.getElementById("filterLocation").value = "";
+  currentCategory = "";
+  currentLocation = "";
+  currentPage = 1;
   loadItems();
-}
-
-// Load items
-async function loadItems(category = "", location = "") {
-  const items = await fetchFoundItems(category, location);
-  renderFoundItems(items);
 }
 
 // Initialize
@@ -330,7 +402,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("searchBtn").addEventListener("click", searchItems);
   document.getElementById("clearBtn").addEventListener("click", clearFilters);
 
-  // Close modals
   document.querySelector(".close").addEventListener("click", closeEditModal);
   document.querySelector(".close-matches").addEventListener("click", closeMatchesModal);
 

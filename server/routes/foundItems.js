@@ -5,16 +5,26 @@ import { findMatches } from "../utils/matchingAlgorithm.js";
 
 const router = express.Router();
 
-// GET all found items (with optional filters)
+// GET all found items (with pagination, filters, and smart sorting)
 router.get("/", async (req, res) => {
   try {
     const db = getDB();
-    const { category, location } = req.query;
+    const { category, location, page = 1, limit = 18 } = req.query;
 
     let filter = {};
     if (category) filter.category = category;
     if (location) filter.locationFound = new RegExp(location, "i");
 
+    // Count total matching items
+    const totalItems = await db.collection("found_items").countDocuments(filter);
+
+    // Calculate pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+    const totalPages = Math.ceil(totalItems / limitNum);
+
+    // Fetch all matching items (for sorting)
     let items = await db.collection("found_items").find(filter).toArray();
 
     // Sort: unclaimed first (newest), then claimed (newest)
@@ -24,7 +34,20 @@ router.get("/", async (req, res) => {
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
-    res.json(items);
+    // Apply pagination after sorting
+    const paginatedItems = items.slice(skip, skip + limitNum);
+
+    res.json({
+      items: paginatedItems,
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalItems,
+        itemsPerPage: limitNum,
+        hasNextPage: pageNum < totalPages,
+        hasPrevPage: pageNum > 1,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -129,6 +152,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// GET matches for a found item
 router.get("/:id/matches", async (req, res) => {
   try {
     const db = getDB();
