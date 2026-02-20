@@ -84,6 +84,12 @@ CampusRecover helps students recover lost items by providing:
 - **Frontend:** Vanilla JavaScript (ES6 modules), HTML5, CSS3
 - **Tools:** ESLint, Prettier, nodemon
 
+## Design Document
+
+The full design document including project description, user personas, user stories, and wireframes is available here:
+
+📄 [Design Document](docs/design-document.pdf)
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
