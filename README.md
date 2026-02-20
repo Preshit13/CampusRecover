@@ -32,11 +32,11 @@ CampusRecover helps students recover lost items by providing:
 
 ### Found Items Page
 
-(To be added by Gurudatt)
+![Found Items](screenshots/found-items.png)
 
 ### Matching System
 
-(To be added by Gurudatt)
+![Matching](screenshots/matching.png)
 
 ## Features
 
@@ -60,11 +60,22 @@ CampusRecover helps students recover lost items by providing:
 
 ### Found Items Management (Gurudatt Gaonkar)
 
-(To be added by Gurudatt)
+- ✅ Report found items with description, location found, current holding location, and contact info
+- ✅ Search and filter found items by category and location
+- ✅ Edit found item reports to update details or pickup location
+- ✅ Mark items as claimed when returned to owner
+- ✅ Delete found item reports
+- ✅ Smart sorting: Unclaimed items first (newest to oldest), then claimed items
+- ✅ Date validation: Cannot report items found in the future
 
 ### Smart Matching System (Gurudatt Gaonkar)
 
-(To be added by Gurudatt)
+- ✅ Automatic match suggestions when viewing a found item
+- ✅ Scoring algorithm based on category (40pts), location proximity (30pts), date proximity (20pts), and keyword similarity (10pts)
+- ✅ Match confidence display: High (≥70%), Medium (≥40%), Low (<40%)
+- ✅ Human-readable match reasons explaining why items are matched
+- ✅ Only matches against active (unrecovered) lost item reports
+- ✅ Top 5 matches returned per found item
 
 ## Tech Stack
 
@@ -155,11 +166,21 @@ npm start
 
 ### Found Items (Gurudatt Gaonkar)
 
-(To be added by Gurudatt)
+| Method | Endpoint                          | Description                                                     |
+| ------ | --------------------------------- | --------------------------------------------------------------- |
+| GET    | /api/found-items                  | Get all found items (optional ?category and ?location filters) |
+| GET    | /api/found-items/:id              | Get single found item by ID                                    |
+| POST   | /api/found-items                  | Create new found item report                                   |
+| PUT    | /api/found-items/:id              | Update found item                                               |
+| PATCH  | /api/found-items/:id/status       | Mark item as claimed                                            |
+| DELETE | /api/found-items/:id              | Delete found item                                               |
+| GET    | /api/found-items/:id/matches      | Get top 5 matching lost item reports for a found item          |
 
 ### Matching (Gurudatt Gaonkar)
 
-(To be added by Gurudatt)
+| Method | Endpoint                     | Description                                    |
+| ------ | ---------------------------- | ---------------------------------------------- |
+| GET    | /api/found-items/:id/matches | Get top 5 matching lost item reports for a found item |
 
 ## Database Schema
 
@@ -182,7 +203,21 @@ updatedAt: Date // Last modification
 
 ### found_items Collection
 
-(To be added by Gurudatt)
+\`\`\`javascript
+{
+\_id: ObjectId,
+  itemName: String,
+  category: String,       // Electronics, Accessories, Clothing, Books, IDs, Keys, Other
+  description: String,
+  locationFound: String,  // Where the item was found
+  currentLocation: String,// Where the item is being held
+  dateTime: Date,         // When item was found
+  contactInfo: String,    // Finder's email
+  status: String,         // "unclaimed" or "claimed"
+  createdAt: Date,        // When report was created
+  updatedAt: Date         // Last modification
+}
+\`\`\`
 
 ## Project Structure
 
