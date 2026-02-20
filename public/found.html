@@ -12,10 +12,10 @@
     <header>
       <h1>📦 CampusRecover - Found Items</h1>
       <nav>
-        <a href="/" class="active">Lost Items</a>
+        <a href="/">Lost Items</a>
         <a href="/found.html">Found Items</a>
         <a href="/analytics.html">Analytics</a>
-    </nav>
+        </nav>
     </header>
 
     <main>
@@ -220,5 +220,19 @@
         <p>🔍 CampusRecover — Northeastern University Lost & Found</p>
         <p>Built by Preshit Ravindra Pimple &amp; Gurudatt Pramod Gaonkar · CS5610 Web Development</p>
     </footer>
+    <script>
+  // Highlight active nav link based on current page
+  const path = window.location.pathname;
+  document.querySelectorAll('nav a').forEach((link) => {
+    const href = link.getAttribute('href');
+    if (
+      href === path ||
+      (href === '/' && (path === '/' || path === '/index.html')) ||
+      (href !== '/' && path.includes(href))
+    ) {
+      link.classList.add('active');
+    }
+  });
+</script>
   </body>
 </html>
