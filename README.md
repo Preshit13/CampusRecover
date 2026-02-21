@@ -101,7 +101,7 @@ The full design document including project description, user personas, user stor
 
 ## Video Demo
 
-🎥 [Project Walkthrough Video](your-youtube-link-here)
+🎥 [Project Walkthrough Video](https://youtu.be/57cUkinRxFo)
 
 Complete demonstration of all features including lost items reporting, found items with smart matching, and analytics dashboard.
 
