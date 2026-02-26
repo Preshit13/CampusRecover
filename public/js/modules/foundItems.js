@@ -6,6 +6,7 @@ let currentCategory = "";
 let currentLocation = "";
 
 // Helper: get current local datetime string for datetime-local input
+//A timezone bug in Lost & Found system
 function getCurrentLocalDateTime() {
   const now = new Date();
   const y = now.getFullYear();
@@ -171,7 +172,7 @@ async function submitFoundItem(e) {
     description: document.getElementById("description").value,
     locationFound: document.getElementById("locationFound").value,
     currentLocation: document.getElementById("currentLocation").value,
-    dateTime: document.getElementById("dateTime").value,
+    dateTime: new Date(document.getElementById("dateTime").value).toISOString(),
     contactInfo: document.getElementById("contactInfo").value,
     status: "unclaimed",
   };
